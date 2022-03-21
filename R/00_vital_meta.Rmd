@@ -1,0 +1,55 @@
+
+```{r -meta, include=F}
+library(metathis)
+library(magrittr); 
+meta() %>%
+  meta_description(
+    "Open Canada Vital Statistics Tracker App enables interactive visualization of data from 'Statistics Canada, Canadian Vital Statistics - Death  (CVSD)' database'"
+  ) %>%
+  meta_name("github-repo" = "open-canada/vitals") %>%
+  meta_viewport() %>%
+  meta_social(
+    title = "Open Canada Vital Statistics Tracker App",
+    url = "https://open-canada.github.io/Apps/vitals",
+    # image = "https://github.com/open-canada/r4gc/raw/main/images/rCanada-octogon.png",
+    image_alt = "o-Canada Vitals Logo",
+    og_type = "app",
+    og_author = c("R4GC Community"),
+  )   %>%
+  meta_general(
+    # keywords = "open canada, statistics, vital databases, cases, deaths, births, covidcanada, covid", # This does not work
+    application_name = "Canadian Vital Statistics - Death  (CVSD) database data tracker",
+    theme_color = "#4285f4",
+    description = "",
+    robots = "index,follow",
+    generator = "R-Shiny",
+    subject = "Open Canada projects",
+    rating = "General",
+    referrer = "no-referrer"
+  )
+``` 
+
+<!--
+  MIT License
+
+Copyright (c) 2021 open-canada
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+  
+  The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+  

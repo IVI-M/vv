@@ -1,0 +1,318 @@
+---
+# title: 'VVeekly: Vital / Vaccination statistics - bias removed'
+title: 'VVeekly: Statistics'
+# VVeekly: your Independent Data Reporter of Vital and Vaccination Statistics
+# VV: Vital-Vaccination Weekly Report
+github-repo: open-canada/vitals
+url: https\://open-canada.github.io/Apps/vitals
+output:
+  flexdashboard::flex_dashboard:
+    # logo: rCanada.png
+    # vertical_layout: scroll
+    # orientation: rows
+    vertical_layout: fill
+    orientation: columns
+    social: menu
+    source_code: https://github.com/ivi-m/vv
+
+    # css: css/basic_css.css
+    # theme: bootstrap
+    # logo: rCanada-icon48.gif
+    # favicon: rCanada-icon24.gif
+license: MIT
+runtime: shiny
+# resource_files:
+# - 991.html
+---
+
+<!-- 
+<div class="footer">
+  <p>  IVIM (c) 2022 | Dmitry Gorodnichy | dg@ivim.ca | github.com/ivi-m</p>
+</div>
+
+-->
+
+```{r 00_vital_meta.Rmd, child = '00_vital_meta.Rmd'}
+```
+
+
+```{r -globals, include=F}
+knitr::opts_chunk$set(echo = F)
+
+library(flexdashboard)  #
+
+
+library(here)
+# source(paste0(here::here(), "R/00_common.R"))
+source(here("R", "00_common.R"))
+
+
+dateCached = ymd("2022-01-10")
+# dateReleased = ymd("2021-12-06"); 
+dateReleased = ymd("2022-01-10"); 
+# dateCached = dateReleased
+
+# renderText(paste0("Data on: ", dateToday%>% as.character() ) )
+
+
+library(googlesheets4)
+gs4_deauth()
+```
+
+
+<!-- # Today `r print(dateToday)` -->
+
+
+# Today (`r format(Sys.time(), "%d %B, %Y")`)
+
+## ...LEFT
+
+
+### Analysis of Cases
+
+#### Cases following vaccination
+
+
+```{r}
+
+
+
+
+# gs4_auth()
+
+
+# 'Cases following vaccination (Source: [PHAC-1], Table 2 _
+# strSheet <- "https://docs.google.com/spreadsheets/d/1lSO5jJwTkMNGl9kk6Y5jeGORGS11KzEE5yTxBGrGYKw/edit?usp=sharing"
+
+#Beta- Raw timeseries data from GC Sources related to C19
+strSheet <- "https://docs.google.com/spreadsheets/d/1pZZR_6KLkyVMUON0fWXHpPBNfRkZjbvHNwZ6DLa21wU"
+col_type  = paste0("DD", paste0 (rep("d", which(LETTERS == "U") - 2),collapse = ""))
+col_type
+which(LETTERS == "U")
+
+dtRaw <- read_sheet(strSheet, 
+                 sheet=3,  range="A:U",  
+                 col_types = col_type,
+                 col_names=F
+                 ) %>% setDT
+
+# dtWeekly <- read_sheet(strSheet, 
+#                  sheet=3,  range=c("A:X"),  
+#                  col_types = col_type,
+#                  col_names=F
+#                  ) %>% setDT
+# 
+# dtWeekly <- read_sheet(strSheet, 
+#                  sheet=3,  range=c("A:X"),  
+#                  col_types = col_type,
+#                  col_names=F
+#                  ) %>% setDT
+
+dtRaw %>% setnames(
+  LETTERS[which(LETTERS=="A"):which(LETTERS=="U")]
+)
+
+dtRaw <- dtRaw[!is.na(B)]
+setkey(dtRaw, B)
+
+dtWeekly <- dtRaw
+
+
+  # if (input$average) {
+  #   convolution_window <- 3
+  #   dtWeekly[, value := frollmean(value, convolution_window, align = "right", fill = 0), by = .(GEO, `Cause of death (ICD-10)`)]
+  # }
+  # 
+  # if (input$vax_total=="Weekly"){ 
+  #   dtVac0[, dose1_rate := dose1_rate - shift(dose1_rate, 1), by = .(GEO)]
+  #   dtVac0[, dose2_rate := dose2_rate - shift(dose2_rate, 1), by = .(GEO)]
+  # } 
+  # 
+
+
+g <- dtWeekly %>% ggplot() +      theme_bw() +
+  # theme(axis.text.x = element_text(face="bold", color="#993333", 
+  #                          size=14, angle=45),
+  #         axis.text.y = element_text(face="bold", color="#993333", 
+  #                          size=14, angle=45)) +
+  # guides(label="none") +
+  # guides(label="col") +
+  theme(legend.position = "bottom") +
+  # coord_flip() +
+  geom_step(aes(B, J), col="blue", size=2, alpha=0.5) +
+  geom_step(aes(B, Q), col="orange", size=2, alpha=0.5) +
+  geom_step(aes(B, X), col="red", size=2, alpha=0.5) +
+  geom_line(aes(B, C), col="black", size=2, alpha=0.5) +
+  
+  scale_x_date(date_labels = "%b %d", date_breaks = "1 month") +
+  # scale_x_date(date_breaks = "1 week", date_labels = "%W") +
+  # scale_x_date(date_minor_breaks = "1 week")
+
+  scale_y_continuous(limits=c(0, 1), breaks=seq(0,1,0.1), labels = percent) +
+  # ylim(0,1) +
+  # geom_line(aes(`...2`, `...10`))
+  labs(
+    # title=NULL, # 
+    # title="Severe COVID-19 outcomes:  unvaccinated vs. vaccinated" ,
+    title="Percentage of people who received two or more doses in weekly COVID-19 cases counts",
+    # subtitle="Average per week",
+    # subtitle="Reported (totals since 2020/12/14)",
+    # subtitle="Reported (totals since 2020/12/14)",
+    caption=
+      "Source: Cases following vaccinations, COVID-19 daily epidemiology update, Public Health Agency of Canada, Updated: March 4, 2022
+    Full analysis: www.IVIM.ca",
+    y=NULL,
+    # y="Cases per week",
+    x="Cases  (blue), Hospitalization (orange), Deaths (red), Vaccination rate (black)"
+  ) 
+
+g
+ggplotly  (g)
+# ggsave("Cases-following-vax.png", width=20, height=12)
+
+
+
+```
+
+#### Cases by age (Source: PHAC-1)
+
+```{r}
+
+#  https://stackoverflow.com/questions/71358881/extracting-numbers-from-string-in-r-using-a-template
+
+x <- '16,296 (12.4%)'
+gsub("[(),%]", "", x) %>% strsplit(" ") %>% unlist() %>% as.numeric()
+
+
+
+
+strSheet <- "https://docs.google.com/spreadsheets/d/1UiIgWgnvkoPLIaxdBcz3XSPTymOVDKUp-pH7pv-HyhY"
+
+getNfromS <- function (x) {
+  d <- gsub("[(),%]", "", x) %>% strsplit(" ") %>% unlist() %>% as.numeric()
+}
+dtCasesByAge0 <- read_sheet(
+  strSheet, col_types="c", col_names=T, sheet=2, range="A2:D11"  ) %>% setDT
+dtCasesByAge0
+
+dtCasesByAge <- dtCasesByAge %>% melt (id=1)
+
+dtCasesByAge[ , d:= lapply(value, getNfromS)][,':=' (N=d[1], p=d[2])]
+
+dtCasesByAge %>% ggplot() +
+
+
+
+```
+### Table 
+
+
+## ... RIGHT
+
+### Side-effects following vaccination
+
+```{r}
+
+
+# Side-effects following vaccination by age (Source: PHAC-2)
+###  https://health-infobase.canada.ca/covid-19/vaccine-safety/
+
+strSheetPHAC2 <- "https://docs.google.com/spreadsheets/d/1BIoCKiIBY5UJ0_4Q6eiz_51TSn_NImkSrJeoIzNm5pY/edit?usp=sharing"
+
+dtEvents<- read_sheet(strSheetPHAC2, 
+                 # col_types = col_type,
+                 # col_names=F,
+                 sheet=2  ) %>% setDT
+
+ncol <- dtEvents %>% ncol
+col_type  = paste0("D", paste0 (rep("d", ncol-1), collapse = ""))
+
+dtEvents<- read_sheet(strSheetPHAC2, 
+                 col_types = col_type,
+                 # col_names=F,
+                 sheet=2  ) %>% setDT
+
+
+
+
+```
+
+
+
+
+```{r 03_vv_dashboard.Rmd, child = '03_vv_dashboard.Rmd'}
+```
+
+
+```{r STOP_HERE, include=FALSE}
+knitr::knit_exit()
+```
+
+
+
+```{r 02_vital_by_cause.Rmd, child = '02_vital_by_cause.Rmd'}
+```
+
+
+# By Vaccination Status
+
+
+
+```{r 99_vital_info.Rmd, child = '99_vital_info.Rmd'}
+```
+
+
+
+Any other codes/text, which you dont want to be shown (yet) in the complied App, can be placed here. For example debugging pane or extra statistical analysis tab
+
+
+
+```{r eval=FALSE, include=FALSE}
+# Open Deaths by Age ----
+
+
+<!-- # By Age  -->
+
+
+
+dtAge <- readRDS(paste0(id, ".Rds")) %>% setDT
+if ( is.na(dtAge[.N]$GEO) ) {
+  dateCached <- dtAge[.N]$Date %>% ymd
+  dtAge <- dtAge[1:(.N-1)]
+}
+
+setnames(dtAge, old=c("Age at time of death", "Sex"), new=c("age", "sex"))
+
+```
+
+
+
+
+
+# Debug 
+
+## ...
+
+### Debug window
+
+
+
+#### Input
+```{r print input1}
+# renderPrint( paste0("Shiny is Running: ", shiny::isRunning() ) )
+renderPrint( input )
+# renderPrint( input$date )
+# renderPrint( input$period )
+# renderPrint( ymd(input$period) )
+# renderPrint( ymd(input$period) %>% min)
+# renderPrint( ymd(input$period) %>% max)
+# renderPrint( paste0("region1 ", region1))
+# renderPrint( paste0("cause1 ", cause1))
+
+# cat("r.dtAll()")
+# renderPrint( r.dtAll() %>% print )
+cat("r.dt0()")
+renderPrint( r.dt0_wise() %>% print )
+cat("r.corr()")
+renderPrint( r.corr() %>% print )
+```

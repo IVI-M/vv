@@ -1,0 +1,447 @@
+
+
+# Summary (dashboard)
+
+## ... 
+
+
+### Today{.value-box}
+
+```{r}
+
+#------------------ Parameters ------------------
+# Set colors
+# https://www.w3.org/TR/css-color-3/#svg-color
+confirmed_color <- "purple"
+active_color <- "#1f77b4"
+recovered_color <- "forestgreen"
+death_color <- "red"
+
+
+# https://github.com/rstudio/flexdashboard/blob/main/inst/examples/crandash/crandash.Rmd
+
+# downloadRate is a reactive expression that computes the download
+# rate during this dashboard's lifetime.
+startTime <- as.numeric(Sys.time())
+downloadRate <- reactive({
+  elapsed <- as.numeric(Sys.time()) - startTime
+  
+})
+# Emit the download rate
+renderValueBox({
+  rate <- formatC(111111, digits = 1, format = "f")
+  valueBox(
+    value = rate,
+    icon = "fa-area-chart",
+    color =  "warning"
+  )
+})
+```
+
+
+
+
+### Total downloads {.value-box}
+
+```{r}
+# dlCount is a reactive expression that keeps track of the total
+# number of rows that have ever appeared through pkgStream.
+
+# Emit the download count
+renderValueBox({
+  valueBox(
+    value = paste(format(1234567, big.mark = ","), "", sep = " "),
+    caption = "Total confirmed cases",
+    # icon = "fa-download",
+    icon = "fas fa-heart-broken",
+    # icon = "fas fa-user-md",
+    color = "primary")
+})
+```
+
+### Unique users {.value-box}
+
+```{r}
+
+renderValueBox({
+  valueBox(value = 333.33, icon = "fa-users")
+})
+```
+
+
+
+
+## ... Cases following vaccination {data-width=175}
+
+<!-- Row {data-height=175} -->
+<!-- ------------------------------------- -->
+
+
+
+Cases following vaccination (Source: PHAC)
+
+
+### Linked Value Box
+
+```{r}
+valueBox(42, icon = "fa-pencil", color = "yellow", href="#details")
+# ("primary", "info", "success", "warning", "danger") 
+```
+
+renderValueBox({
+rate <- formatC(downloadRate(), digits = 1, format = "f")
+valueBox(
+value = rate,
+icon = "fa-area-chart",
+color = if (rate >= input$rateThreshold) "warning" else "primary"
+)
+})
+
+### Safety
+
+```{r}
+valueBox(2, icon="fa-hospital", caption="qwertyu")
+```
+
+
+## ... Side effects..... {data-width=175}
+
+<!-- Row {data-height=175} -->
+<!-- ------------------------------------- -->
+
+Side effects following COVID-19 vaccination  (Source: PHAC)
+
+### Linked Value Box
+
+```{r}
+valueBox(42, icon = "fa-pencil", color = "yellow", href="#details")
+# ("primary", "info", "success", "warning", "danger") 
+```
+
+### C-19 naive 
+```{r}
+valueBox(2, icon="fa-hospital", caption="qwertyu")
+```
+
+
+### C-19 exposed 
+```{r}
+valueBox(2, icon="fa-tag" )
+```
+
+
+### C-19 vaccinated
+
+```{r}
+valueBox(2, icon="fa-tag" )
+```
+
+
+### C-19 cases
+```{r}
+valueBox(2, icon="fa-hospital")
+```
+
+
+
+### C-19 Hospitalizations
+```{r}
+valueBox(2, icon="fa-hospital")
+```
+
+
+
+### C-19 Deaths
+```{r}
+valueBox(2, icon="fa-tag" )
+```
+
+
+
+
+## ... Death  by causes ... {data-width=175}
+
+<!-- Row {data-height=175} -->
+<!-- ------------------------------------- -->
+
+
+Deaths by causes (source; StatsCan) 
+
+### Linked Value Box
+
+```{r}
+valueBox(42, icon = "fa-pencil", color = "yellow", href="#details")
+# ("primary", "info", "success", "warning", "danger") 
+```
+
+### C-19 naive 
+```{r}
+valueBox(2, icon="fa-hospital", caption="qwertyu")
+```
+
+
+###  Regions with no C-19 mandates
+
+```{r}
+valueBox(7 , icon="fa-tag" )
+# find more favicons here: https://fontawesome.com/icons?d=gallery
+# https://ionic.io/ionicons
+
+# https://getbootstrap.com/docs/5.1/components/accordion/
+
+```
+
+
+###  Regions with no masks
+
+```{r}
+valueBox(7 , icon="fa-tag" )
+
+```
+
+
+###  Regions declared C-19 pandemic over
+
+```{r}
+valueBox(7 , icon="fa-tag" )
+
+```
+
+
+### Severe C-19 vaccine events
+
+
+```{r}
+valueBox(7 , icon="fa-tag" )
+```
+
+
+
+
+
+## ... Death  by causes ... {data-width=175}
+
+<!-- Row {data-height=175} -->
+<!-- ------------------------------------- -->
+
+
+Policy Stats (source; various) 
+
+
+
+###  Regions declared C-19 pandemic over
+
+```{r}
+valueBox(7 , icon="fa-tag" )
+
+```
+
+
+### Severe C-19 vaccine events
+
+
+```{r}
+valueBox(7 , icon="fa-tag" )
+```
+
+
+
+## ..2nd .... {data-height=1000, .tabset}
+
+### omg
+
+```{r}
+
+
+
+```
+
+### it's taaabbbed
+
+```{r}
+
+
+
+
+```
+
+
+## ..3nd .... 
+
+### Fact Checker
+
+✓
+☑
+✅
+
++	Plus Sign	&#43;	&#x002B;
+
+&#f00c 
+
+
+
+&#10036; &#10037; &#10038;
+
+<FontAwesomeIcon icon="fa-solid fa-check" />
+
+
+
+<i class="fa-solid fa-check">QWERTYUI</i>
+
+
+
+
+### Fact Checker
+
+✓
+
+#### code from  coronavirus-dashboard
+
+```{r}
+
+# from coronavirus-dashboard
+if (F) {
+  
+  library(dtplyr)
+  # install.packages("devtools")
+  # devtools::install_github("RamiKrispin/coronavirus", force = TRUE)
+  library(coronavirus)
+  data(coronavirus)
+  coronavirus %>% setDT
+  dfCanada <- coronavirus  [country == "Canada"]
+  dfCanada$date %>% max  # "2021-10-13"
+  
+  df <- dfCanada %>% 
+    #reactive({
+    # coronavirus %>% lazy_dt() %>% 
+    # dplyr::filter(date == max(date)) %>%
+    #dplyr::filter(Country.Region == input$country) %>%
+    dplyr::filter(country == "Canada") %>%
+    dplyr::group_by(province, type) %>%
+    dplyr::summarise(total = sum(cases)) %>%
+    tidyr::pivot_wider(
+      names_from = type,
+      values_from = total
+    ) %>%
+    # dplyr::mutate(unrecovered = confirmed - ifelse(is.na(recovered), 0, recovered) - ifelse(is.na(death), 0, death)) %>%
+    dplyr::mutate(unrecovered = confirmed - ifelse(is.na(death), 0, death)) %>%
+    dplyr::arrange(-confirmed) %>%
+    dplyr::ungroup() %>%
+    # dplyr::mutate(country = dplyr::if_else(Country.Region == "United Arab Emirates", "UAE", Country.Region)) %>%
+    # dplyr::mutate(country = dplyr::if_else(country == "Mainland China", "China", country)) %>%
+    # dplyr::mutate(country = dplyr::if_else(country == "North Macedonia", "N.Macedonia", country)) %>%
+    dplyr::mutate(province = trimws(province)) %>%
+    dplyr::mutate(province = factor(province, levels = province))
+  
+  #})
+  
+  df_daily <- 
+    #reactive({
+    coronavirus %>%
+    #dplyr::filter(Country.Region == input$country) %>%
+    dplyr::filter(Country.Region == "Canada") %>%
+    dplyr::group_by(date, type) %>%
+    dplyr::summarise(total = sum(cases, na.rm = TRUE)) %>%
+    tidyr::pivot_wider(
+      names_from = type,
+      values_from = total
+    ) %>%
+    dplyr::arrange(date) %>%
+    dplyr::ungroup() %>%
+    #dplyr::mutate(active = confirmed - death - recovered) %>%
+    dplyr::mutate(active = confirmed - death) %>%
+    dplyr::mutate(
+      confirmed_cum = cumsum(confirmed),
+      death_cum = cumsum(death),
+      # recovered_cum = cumsum(recovered),
+      active_cum = cumsum(active)
+    )
+  # })
+  
+  df.today <- coronavirus %>% dplyr::filter(date == max(date)) # never used ??
+  
+  
+  renderPrint({df %>% knitr::kable()
+  })
+  
+  DT::renderDataTable({
+    DT::datatable(    df, filter="top",      
+                      options = list(bPaginate = T,      pageLength = 5
+                      )  )
+  })
+  
+  DT::renderDataTable({
+    DT::datatable(    df_daily, filter="top",      
+                      options = list(bPaginate = T,      pageLength = 5
+                      )  )
+  })
+  
+  DT::renderDataTable({
+    DT::datatable(    df.today, filter="top",      
+                      options = list(bPaginate = T,      pageLength = 5
+                      )  )
+  })
+  
+  
+ renderText({
+    cat(glue::glue("\n\n# {input$country} ({input$state}) on {input$date}\n\n"))
+})
+
+# renderText({
+#   cat(paste0("\n\n# ", input$country), "\n\n")
+# }) 
+  
+  
+ # Plotting the data
+
+daily_confirmed %>%
+  plotly::plot_ly() %>%
+  plotly::add_trace(
+    x = ~date,
+    y = ~Canada,
+    type = "scatter",
+    mode = "lines+markers",
+    name = "Canada"
+  ) %>%
+  plotly::add_trace(
+    x = ~date,
+    y = ~France,
+    type = "scatter",
+    mode = "lines+markers",
+    name = "France"
+  ) %>%
+  plotly::add_trace(
+    x = ~date,
+    y = ~Spain,
+    type = "scatter",
+    mode = "lines+markers",
+    name = "Spain"
+  ) %>%
+  plotly::add_trace(
+    x = ~date,
+    y = ~Italy,
+    type = "scatter",
+    mode = "lines+markers",
+    name = "Italy"
+  ) %>%
+  plotly::layout(
+    title = "",
+    legend = list(x = 0.1, y = 0.9),
+    yaxis = list(title = "Number of new confirmed cases"),
+    xaxis = list(title = "Date"),
+    # paper_bgcolor = "black",
+    # plot_bgcolor = "black",
+    # font = list(color = 'white'),
+    hovermode = "compare",
+    margin = list(
+      # l = 60,
+      # r = 40,
+      b = 10,
+      t = 10,
+      pad = 2
+    )
+  )
+ 
+}
+
+```
